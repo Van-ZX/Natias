@@ -30,5 +30,6 @@ If you find this repository useful for your work, please consider citing it as f
   number={},
   pages={6636-6649},
   keywords={Steganography;Distortion;Feature extraction;Security;Deep learning;Convolutional neural networks;Source coding;Adversarial examples;transferability;attribution of deep networks;image steganography;steganalysis},
-  doi={10.1109/TIFS.2024.3421893}}
+  doi={10.1109/TIFS.2024.3421893}
+}
 ```
