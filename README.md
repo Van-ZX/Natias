@@ -15,3 +15,20 @@ python split_gen_adv_stego.py --train_cover_dir train_cover_dir --val_cover_dir 
 
 ## Contact
 If you have any questions, please contact: fanzx@mail.ustc.edu.cn
+
+# Citing
+
+If you find this repository useful for your work, please consider citing it as follows:
+
+```bibtex
+@ARTICLE{10580936,
+  author={Fan, Zexin and Chen, Kejiang and Zeng, Kai and Zhang, Jiansong and Zhang, Weiming and Yu, Nenghai},
+  journal={IEEE Transactions on Information Forensics and Security}, 
+  title={Natias: Neuron Attribution-Based Transferable Image Adversarial Steganography}, 
+  year={2024},
+  volume={19},
+  number={},
+  pages={6636-6649},
+  keywords={Steganography;Distortion;Feature extraction;Security;Deep learning;Convolutional neural networks;Source coding;Adversarial examples;transferability;attribution of deep networks;image steganography;steganalysis},
+  doi={10.1109/TIFS.2024.3421893}}
+```
