@@ -5,7 +5,6 @@ import random
 import numpy as np
 from utils.steg_tools import embd_sim
 import models
-from adv_emb import compute_fea_ig
 
 def SPS_ENH(cover, 
         model, 
@@ -164,3 +163,46 @@ def NAA_SPS_ENH(cover,
                     return adv_stego, 1, 0
         if iter_idx == max_iter - 1 and prob[0][0].item() < 0.5:
             return conv_stego, 0, 0
+
+def compute_fea_ig(fea_loss, inputs,label_inputs,model, steps, thr):
+    baseline = np.zeros(inputs.shape)
+    weight = torch.zeros((1, 128, 64, 64)).cuda()
+
+    scaled_inputs = []
+    feas = []
+    for idx in range(steps):
+
+        
+        co = inputs + np.random.normal(size = inputs.shape, loc=0.0, scale=0.25)
+        co = torch.from_numpy(co).cuda().unsqueeze(0)
+        co.requires_grad_(True)
+        scaled_inputs.append(co)
+        
+
+        output, fea = model(co)
+        feas.append(fea)
+        fea_gradient = torch.autograd.grad(output[:, label_inputs], fea, grad_outputs=torch.ones_like(output[:, label_inputs]), retain_graph=True)[0]
+        x_gradient = torch.autograd.grad(output[:, label_inputs], co, grad_outputs=torch.ones_like(output[:, label_inputs]), retain_graph=True)[0]
+        inputs = inputs + 0.0025 * np.sign(x_gradient.detach().cpu()).squeeze(0).numpy()
+        weight = weight + fea_gradient
+    
+
+    IA = weight / steps
+
+
+    delta_Y = feas[-1] - feas[0]
+    integrated_grad = delta_Y * IA
+
+    IG = integrated_grad.unsqueeze(0)
+    tmp_sum = torch.sum(IG, (-1, -2))
+    sort_sum, _ = torch.sort(abs(tmp_sum))
+    T = sort_sum[0, -int(sort_sum.shape[1]*thr)]
+    position = torch.where(abs(tmp_sum)>T)[1]
+
+    loss = torch.sum(tmp_sum[0, position])
+
+    model.zero_grad()
+    loss.backward()
+    avg_grads =  scaled_inputs[0].grad.data +  scaled_inputs[-1].grad.data
+    # del integrated_grad,delta_X,avg_grads,grads,loss,score,att_out
+    return avg_grads
